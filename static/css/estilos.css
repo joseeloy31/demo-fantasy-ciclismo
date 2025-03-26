@@ -1,0 +1,542 @@
+/* Reset y estilos globales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px; /* Tamaño de letra 10px */
+  font-weight: 300; /* Font-weight bajo */
+}
+
+/* CABECERA */
+.cabecera {
+  width: 100vw;
+  height: 30px; /* Cabecera de 30px de alto */
+  background-color: #ff2c2c; /* Fondo rojo */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar el texto horizontalmente */
+}
+.cabecera::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -18px;
+  width: calc(100vw/4);
+  height: 45px;
+  background-color: inherit;
+  transform: skew(-40deg);
+}
+.cabecera__titulo {
+  color: #fff;
+}
+
+/* Fondo del contenido y centrado lateral (1200px máximo) */
+.contenido {
+  background-color: #efefef;
+  height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+  padding-left: calc((100vw - 1200px) / 2);
+  padding-right: calc((100vw - 1200px) / 2);
+}
+
+/* Contenedor de filtros centrado en 1200px */
+.contenedor-filtros {
+  max-width: 1200px;
+  width: 100%;
+  margin: 30px auto 0;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Base para cada filtro */
+.filtro {
+  position: relative;
+  flex: 1;
+  height: 30px;
+  background-color: #004b87;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Trapecio del filtro (lado izquierdo) */
+.filtro__trapecio {
+  position: absolute;
+  left: -12px;
+  top: 0;
+  width: 80px;
+  height: 30px;
+  background-color: #ff2c2c;
+  transform: skew(40deg);
+  z-index: 1;
+}
+
+/* Etiqueta del filtro */
+.filtro__texto {
+  position: relative;
+  z-index: 2;
+}
+
+/* Contenedor de botones con flechas y área scrollable */
+.filtro__botones-contenedor {
+  position: absolute;
+  left: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 510px; /* 19px izquierda + 472px área scrollable + 19px derecha */
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+/* Wrapper scrollable para los botones */
+.filtro__botones-wrapper {
+  width: 472px;
+  overflow-x: auto;
+  display: flex;
+  gap: 8px;
+  scroll-snap-type: x mandatory;
+}
+
+/* Ocultar scrollbar en WebKit */
+.filtro__botones-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.filtro__boton {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  color: #fff;
+}
+
+/* Estilos para filtro de Año */
+.filtro--anio .filtro__boton {
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 6px;
+  border: 1px solid #ff2c2c;
+  border-radius: 4px;
+  background-color: #ff2c2c; /* Rojo por defecto */
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Estilos para filtro de Liga */
+.filtro--liga .filtro__boton {
+  display: inline-block;
+  width: 112px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 4px;
+  border: 1px solid #ff2c2c;
+  border-radius: 4px;
+  background-color: #ff2c2c; /* Rojo por defecto */
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Botón activo (verde) para ambos filtros */
+.filtro__boton.seleccionado {
+  background-color: #008800; /* Verde */
+  border-color: #008800;
+  color: #fff; /* Texto blanco cuando está activo */
+}
+
+/* Hover para botones rojos (no seleccionados) */
+.filtro__boton:not(.seleccionado):hover {
+  background-color: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* Hover para botones verdes (seleccionados) que no tengan la clase "nohover" */
+.filtro__boton.seleccionado:not(.nohover):hover {
+  color: #000;
+}
+
+/* Clases sticky: el botón se fija al extremo */
+.filtro__boton.sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.filtro__boton.sticky-right {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+}
+
+/* Flechas de navegación en su espacio de 19px */
+.filtro__flecha {
+  width: 19px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff; 
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+/* Esta regla se aplica solo si la flecha tiene la clase flecha-activa */
+.filtro__flecha.flecha-activa {
+  opacity: 1; 
+}
+
+/* PESTAÑAS */
+.contenedor-pestanas {
+  display: flex;
+  gap: 0;
+  margin: 15px 0 10px;
+  border-bottom: 1px solid #008800;
+}
+
+.pestana {
+  flex: 1;
+  background-color: #fff;
+  border: 2px solid transparent; /* Bordes invisibles para evitar movimientos */
+  border-bottom: 0px solid #008800; /* Borde inferior siempre visible */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  color: #004b87;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
+
+.pestana:hover {
+  background-color: #66aa66; /* Verde menos puro */
+  color: #fff;
+  border: 2px solid #66aa66;
+  border-bottom: 1px solid #66aa66; /* Mantiene el borde inferior */
+}
+
+.pestana.activa {
+  background-color: #008800; /* Verde más suave */
+  color: #fff;
+  border: 2px solid #008800;
+  border-bottom: 1px solid #008800; /* Mantiene el borde inferior */
+}
+
+.contenedor-botones-info {
+  display: flex;
+  justify-content: center; /* Alinea a la derecha */
+  align-items: center;       /* Centra verticalmente */
+  margin: 10px 0;
+  gap: 0;                   /* Sin separación entre botones */
+}
+
+.boton-info {
+  width: 80px;
+  height: 20px;
+  line-height: 20px;        /* Centrado vertical del texto */
+  text-align: center;
+  border: 1px solid #004b87; /* Borde en azul, similar a las pestañas */
+  background-color: #fff;    /* Fondo blanco por defecto */
+  color: #004b87;            /* Texto azul por defecto */
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  outline: none;
+  box-shadow: none;         /* Sin relieve */
+}
+
+/* Bordes redondeados diferenciados */
+#btn-puntos {
+  border-radius: 4px 0 0 4px;
+}
+#btn-medallas {
+  border-radius: 0 4px 4px 0;
+}
+
+/* Estado activo: fondo verde y texto blanco */
+.boton-info.activo {
+  background-color: #008800;
+  color: #fff;
+  border-color: #008800;
+}
+
+/* Hover en botón inactivo: fondo se vuelve verde claro y texto blanco */
+.boton-info:not(.activo):hover {
+  background-color: #66aa66; /* Verde menos puro */
+  color: #fff;
+  border: 2px solid #66aa66;
+  border-bottom: 1px solid #66aa66; /* Mantiene el borde inferior */
+}
+
+/* TABLA DE DATOS */
+.contenedor-tabla {
+  max-height: calc(100vh - 205px);
+  overflow-x: auto;
+  overflow-y: auto;
+  margin: 0 auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.contenedor-tabla::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
+}
+
+/* Estilo de la tabla */
+.tabla {
+  display: table;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 12px;
+  text-align: center;
+  background-color: #ffffff;
+  border-left: 2px solid #008800;
+  margin: 0 auto;
+  width: auto;
+}
+
+/* Estilo de la cabecera */
+.tabla-header {
+  display: table-header-group;
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Asegura que quede por encima del contenido */
+  background-color: #004b87; /* El mismo color de fondo de la cabecera */
+}
+
+/* Fila */
+.fila {
+  display: table-row;
+}
+
+.fila-encabezado {
+  background-color: #004b87;
+}
+
+/* Celda */
+.celda {
+  display: table-cell;
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px;
+  font-size: 12px;
+}
+
+.celda-encabezado {
+  color: #fff;
+  font-weight: bold;
+  height: 58px;
+}
+
+/* Contenido de la celda con truncado a 3 filas */
+.contenido-celda-encabezado {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+/* ----- Estilos para el Cuerpo de la Tabla (Datos) ----- */
+.tabla-body {
+  display: table-row-group;
+}
+
+/* Fila de datos: fija la altura de la fila */
+.fila-dato {
+  display: table-row;
+  border-bottom: 1px solid #49494933;
+}
+
+/* Celda de datos: forzamos la altura y usamos box-sizing */
+.celda-dato {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  padding: 6px;
+  box-sizing: border-box;  /* Incluye el padding en la altura */
+  min-height: 36px;
+  max-height: 36px;
+  height: 36px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+/* Contenido interno de la celda: centrar verticalmente con flex */
+.contenido-celda-dato {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 22px;
+  max-height: 22px;
+  height: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.izquierda {
+  justify-content: left;
+}
+
+/* Estilo específico para la columna de posición */
+.celda-posicion {
+  min-width: 40px;
+  max-width: 40px;
+  width: 40px;
+  font-size: 20px;
+}
+
+/* Estilo específico para la columna que muestra medallas */
+.celda-medalla {
+  min-width: 50px;
+  max-width: 50px;
+  width: 50px;
+}
+
+/* ----- Estilos para Valores de Eventos (Posición y Puntos) ----- */
+.posicion {
+  font-size: 7px;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+
+.valor {
+  font-size: 12px;
+  vertical-align: middle;
+  display: inline-block;  /* Para que el border-radius se aplique correctamente */
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* Estilos para posiciones especiales en eventos */
+.valor.oro {
+  background-color: #FFD700;  /* Oro */
+  color: #fff;
+  border: 1px solid #FFD700;
+}
+
+.valor.plata {
+  background-color: #C0C0C0;  /* Plata */
+  color: #fff;
+  border: 1px solid #C0C0C0;
+}
+
+.valor.bronce {
+  background-color: #CD7F32;  /* Bronce */
+  color: #fff;
+  border: 1px solid #CD7F32;
+}
+
+/* ----- Estilos para el Total (última columna) ----- */
+.valor.total {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+}
+
+.valor.total.oro {
+  background-color: #e6c200;  /* Tonalidad oro más oscura */
+  color: #fff;
+  border: 1px solid #bfa000;
+}
+
+.valor.total.plata {
+  background-color: #a9a9a9;  /* Gris oscuro */
+  color: #fff;
+  border: 1px solid #8f8f8f;
+}
+
+.valor.total.bronce {
+  background-color: #a67c52;  /* Tonalidad bronce oscura */
+  color: #fff;
+  border: 1px solid #8a6233;
+}
+
+.medalla {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.fila-oro {
+  color: #e6c200;
+}
+
+.fila-plata {
+  color: #707070;
+}
+
+.fila-bronce {
+  color: #8a6233;
+}
+
+.medalla-oro {
+  background-color: #dfa831;
+}
+
+.medalla-plata {
+  background-color: #ad9496;
+}
+
+.medalla-bronce {
+  background-color: #b8885b;
+}
+
+.medalla-farolillo {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ff6666; /* Rojo un poco más claro */
+}

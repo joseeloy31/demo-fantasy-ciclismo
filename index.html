@@ -1,0 +1,104 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Clasificaciones Velogames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="./static/css/estilos.css"/>
+  </head>
+  <body>
+    <!-- cabecera.html -->
+    <header class="cabecera">
+      <h1 class="cabecera__titulo">Clasificaciones Velogames</h1>
+    </header>
+    <!-- contenido.html -->
+    <main class="contenido">
+      <div class="contenedor-filtros">
+          <!-- Filtro de Año: botones fijos con eventos inline -->
+          <div class="filtro filtro--anio">
+              <div class="filtro__trapecio"></div>
+              <div class="filtro__texto">Año</div>
+              <div class="filtro__botones-contenedor">
+                  <div class="filtro__flecha filtro__flecha--izquierda">&lt;</div>
+                  <div class="filtro__botones-wrapper">
+                      <button class="filtro__boton seleccionado" data-valor="2025" onclick="cargarLigasDeAnio(this.dataset.valor)">2025</button>
+                      <button class="filtro__boton" data-valor="2024" onclick="cargarLigasDeAnio(this.dataset.valor)">2024</button>
+                      <button class="filtro__boton" data-valor="2023" onclick="cargarLigasDeAnio(this.dataset.valor)">2023</button>
+                      <button class="filtro__boton" data-valor="2022" onclick="cargarLigasDeAnio(this.dataset.valor)">2022</button>
+                      <button class="filtro__boton" data-valor="2021" onclick="cargarLigasDeAnio(this.dataset.valor)">2021</button>
+                      <button class="filtro__boton" data-valor="2020" onclick="cargarLigasDeAnio(this.dataset.valor)">2020</button>
+                      <button class="filtro__boton" data-valor="2019" onclick="cargarLigasDeAnio(this.dataset.valor)">2019</button>
+                      <button class="filtro__boton" data-valor="2018" onclick="cargarLigasDeAnio(this.dataset.valor)">2018</button>
+                      <button class="filtro__boton" data-valor="2017" onclick="cargarLigasDeAnio(this.dataset.valor)">2017</button>
+                      <button class="filtro__boton" data-valor="2016" onclick="cargarLigasDeAnio(this.dataset.valor)">2016</button>
+                      <button class="filtro__boton" data-valor="2015" onclick="cargarLigasDeAnio(this.dataset.valor)">2015</button>
+                      <button class="filtro__boton" data-valor="2014" onclick="cargarLigasDeAnio(this.dataset.valor)">2014</button>
+                      <button class="filtro__boton" data-valor="2013" onclick="cargarLigasDeAnio(this.dataset.valor)">2013</button>
+                      <button class="filtro__boton" data-valor="2012" onclick="cargarLigasDeAnio(this.dataset.valor)">2012</button>
+                      <button class="filtro__boton" data-valor="2011" onclick="cargarLigasDeAnio(this.dataset.valor)">2011</button>
+                      <button class="filtro__boton" data-valor="2010" onclick="cargarLigasDeAnio(this.dataset.valor)">2010</button>
+                      <button class="filtro__boton" data-valor="2009" onclick="cargarLigasDeAnio(this.dataset.valor)">2009</button>
+                      <button class="filtro__boton" data-valor="2008" onclick="cargarLigasDeAnio(this.dataset.valor)">2008</button>
+                      <button class="filtro__boton" data-valor="2007" onclick="cargarLigasDeAnio(this.dataset.valor)">2007</button>
+                      <button class="filtro__boton" data-valor="2006" onclick="cargarLigasDeAnio(this.dataset.valor)">2006</button>
+                      <button class="filtro__boton" data-valor="2005" onclick="cargarLigasDeAnio(this.dataset.valor)">2005</button>
+                      <button class="filtro__boton" data-valor="2004" onclick="cargarLigasDeAnio(this.dataset.valor)">2004</button>
+                      <button class="filtro__boton" data-valor="2003" onclick="cargarLigasDeAnio(this.dataset.valor)">2003</button>
+                      <button class="filtro__boton" data-valor="2002" onclick="cargarLigasDeAnio(this.dataset.valor)">2002</button>
+                      <button class="filtro__boton" data-valor="2001" onclick="cargarLigasDeAnio(this.dataset.valor)">2001</button>
+                      <button class="filtro__boton" data-valor="2000" onclick="cargarLigasDeAnio(this.dataset.valor)">2000</button>
+                  </div>
+                  <div class="filtro__flecha filtro__flecha--derecha">&gt;</div>
+              </div>
+          </div>
+          <!-- Filtro de Liga (carrusel scrollable con touchpad) -->
+          <div class="filtro filtro--liga">
+              <div class="filtro__trapecio"></div>
+              <div class="filtro__texto">Liga</div>
+              <div class="filtro__botones-contenedor">
+                  <div class="filtro__flecha filtro__flecha--izquierda">&lt;</div>
+                  <div class="filtro__botones-wrapper">
+                      <button class="filtro__boton seleccionado" data-valor="Hermida" title="Hermida">Hermida</button>
+                      <button class="filtro__boton" data-valor="Gregarios" title="Gregarios">Gregarios</button>
+                      <button class="filtro__boton" data-valor="Hors Categorie" title="Hors Categorie">Hors Categorie</button>
+                      <button class="filtro__boton" data-valor="Trueke Bikers" title="Trueke Bikers">Trueke Bikers</button>
+                      <button class="filtro__boton" data-valor="Quick Step Team" title="Quick Step Team">Quick Step Team</button>
+                      <button class="filtro__boton" data-valor="Fleche Wallone Cyclists" title="Fleche Wallone Cyclists">Fleche Wallone Cyclists</button>
+                      <button class="filtro__boton" data-valor="Remco Team" title="Remco Team">Remco Team</button>
+                      <button class="filtro__boton" data-valor="BH Zor Seguros Amaya" title="BH Zor Seguros Amaya">BH Zor Seguros Amaya</button>
+                      <button class="filtro__boton" data-valor="Caja Rural Seguros RGA" title="Caja Rural Seguros RGA">Caja Rural Seguros RGA</button>
+                      <button class="filtro__boton" data-valor="Faun Ardech Classics" title="Faun Ardech Classics">Faun Ardech Classics</button>
+                  </div>
+                  <div class="filtro__flecha filtro__flecha--derecha">&gt;</div>
+              </div>
+          </div>
+      </div>
+      <!-- Pestañas de competición -->
+      <div class="contenedor-pestanas">
+          <table>
+              <thead>
+                  <tr id="fila-pestanas"></tr>
+              </thead>
+          </table>
+      </div>
+      <div class="contenedor-botones-info">
+          <button class="boton-info activo" id="btn-puntos" onclick="switchTabla('puntos')">Puntos</button>
+          <button class="boton-info" id="btn-medallas" onclick="switchTabla('medallas')">Medallas</button>
+      </div>
+      <div class="contenedor-tabla">
+          <div class="tabla">
+              <div class="tabla-header">
+                  <div class="fila fila-encabezado" id="encabezado">
+                      <!-- Aquí se agregarán las celdas de la cabecera -->
+                  </div>
+              </div>
+              <div class="tabla-body" id="tabla-jugadores">
+                  <!-- Aquí se agregarán las filas de datos -->
+              </div>  
+          </div>
+      </div>
+    </main>
+  <script src="./static/js/script.js'"></script>
+  </body>
+</html>
