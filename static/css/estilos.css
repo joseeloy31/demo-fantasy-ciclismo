@@ -426,7 +426,7 @@ body {
 
 .celda-encabezado.fija-derecha {
   position: sticky;
-  right: 0;
+  right: 0.5;
   background-color: #004b87;
 }
 
@@ -441,7 +441,7 @@ body {
 
 .celda-dato.fija-derecha {
   position: sticky;
-  right: 0;
+  right: 0.5;
   background-color: #ffffff;
   z-index: 2;
 }
