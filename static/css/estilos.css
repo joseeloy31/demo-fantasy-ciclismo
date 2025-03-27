@@ -316,9 +316,9 @@ body {
   font-size: 12px;
   text-align: center;
   background-color: #ffffff;
-  border-left: 2px solid #008800;
   margin: 0 auto;
   width: auto;
+  position: relative; /* Necesario para posicionar el pseudo-elemento */
 }
 
 /* Estilo de la cabecera */
@@ -326,7 +326,7 @@ body {
   display: table-header-group;
   position: sticky;
   top: 0;
-  z-index: 2; /* Asegura que quede por encima del contenido */
+  z-index: 3; /* Asegura que quede por encima del contenido */
   background-color: #004b87; /* El mismo color de fondo de la cabecera */
 }
 
@@ -412,6 +412,37 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ----- Modificadores para columnas fijas ----- */
+/* Para la cabecera */
+.celda-encabezado.fija-izquierda {
+  position: sticky;
+  left: 0;
+  background-color: #004b87;
+  box-shadow: 2px 0 0 #008800 inset;
+}
+
+.celda-encabezado.fija-derecha {
+  position: sticky;
+  right: 0;
+  background-color: #004b87;
+}
+
+/* Para el contenido */
+.celda-dato.fija-izquierda {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 2px 0 0 #008800 inset;
+  z-index: 2;
+}
+
+.celda-dato.fija-derecha {
+  position: sticky;
+  right: 0;
+  background-color: #ffffff;
+  z-index: 2;
 }
 
 .izquierda {

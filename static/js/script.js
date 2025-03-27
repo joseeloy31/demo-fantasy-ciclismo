@@ -543,14 +543,14 @@ function pintarTablaPuntos() {
 
     // Encabezado de la tabla para "Puntos"
     document.getElementById("encabezado").innerHTML = `
-        <div class="celda celda-encabezado">
+        <div class="celda celda-encabezado fija-izquierda">
             <div class="contenido-celda contenido-celda-encabezado">Jugador</div>
         </div>
         ${columnas.map(col => `
             <div class="celda celda-encabezado">
                 <div class="contenido-celda contenido-celda-encabezado">${col}</div>
             </div>`).join("")}
-        <div class="celda celda-encabezado">
+        <div class="celda celda-encabezado fija-derecha">
             <div class="contenido-celda contenido-celda-encabezado">TOTAL</div>
         </div>
     `;
@@ -565,7 +565,7 @@ function pintarTablaPuntos() {
 
             return `
                 <div class="fila fila-dato">
-                    <div class="celda celda-dato">
+                    <div class="celda celda-dato fija-izquierda">
                         <div class="contenido-celda contenido-celda-dato">${jugador}</div>
                     </div>
                     ${eventsPoints.map((evento, i) => {
@@ -580,7 +580,7 @@ function pintarTablaPuntos() {
                                 </div>
                             </div>`;
                     }).join("")}
-                    <div class="celda celda-dato">
+                    <div class="celda celda-dato fija-derecha">
                         <div class="contenido-celda contenido-celda-dato">
                             <span class="posicion">(${rankingTotal})</span>
                             <span class="valor total ${claseTotal}">${nf.format(puntosTotales)}</span>
@@ -589,6 +589,8 @@ function pintarTablaPuntos() {
                 </div>`;
         })
         .join("");
+
+    inicializarScroll();
 }
 
 function pintarTablaMedallas() {
@@ -689,6 +691,8 @@ function pintarTablaMedallas() {
             `;
         })
         .join("");
+
+    inicializarScroll();
 }
 
 function esActivoPuntos() {
@@ -709,7 +713,14 @@ function generarMedallaFarolillos(valor) {
     return valor !== "" ? `<div class="contenido-celda contenido-celda-dato medalla-farolillo">${valor}</div>` : "";
 }
 
+// Función que inicializa el scroll de la taba.
+function inicializarScroll() {
+    const contenedorTabla = document.querySelector('.contenedor-tabla');
+    contenedorTabla.scrollTop = 0;
+    contenedorTabla.scrollLeft = 0;
+}
 
+// Función que pinta la tabla de puntos o medallas en función de la selección del usuario.
 function switchTabla(tipo) {
     if (tipo === 'puntos') {
         document.getElementById("btn-puntos").classList.add("activo");
