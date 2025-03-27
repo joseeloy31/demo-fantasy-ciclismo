@@ -418,9 +418,10 @@ body {
 /* Para la cabecera */
 .celda-encabezado.fija-izquierda {
   position: sticky;
-  left: 0;
+  left: 0.5;
   background-color: #004b87;
   box-shadow: 2px 0 0 #008800 inset;
+  transform: translateZ(0);
 }
 
 .celda-encabezado.fija-derecha {
@@ -432,7 +433,7 @@ body {
 /* Para el contenido */
 .celda-dato.fija-izquierda {
   position: sticky;
-  left: 0;
+  left: 0.5;
   background-color: #ffffff;
   box-shadow: 2px 0 0 #008800 inset;
   z-index: 2;
