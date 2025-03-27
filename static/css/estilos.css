@@ -418,7 +418,7 @@ body {
 /* Para la cabecera */
 .celda-encabezado.fija-izquierda {
   position: sticky;
-  left: 0.5;
+  left: 0;
   background-color: #004b87;
   box-shadow: 2px 0 0 #008800 inset;
   transform: translateZ(0);
@@ -426,14 +426,14 @@ body {
 
 .celda-encabezado.fija-derecha {
   position: sticky;
-  right: 0.5;
+  right: 0;
   background-color: #004b87;
 }
 
 /* Para el contenido */
 .celda-dato.fija-izquierda {
   position: sticky;
-  left: 0.5;
+  left: 0;
   background-color: #ffffff;
   box-shadow: 2px 0 0 #008800 inset;
   z-index: 2;
@@ -441,7 +441,7 @@ body {
 
 .celda-dato.fija-derecha {
   position: sticky;
-  right: 0.5;
+  right: 0;
   background-color: #ffffff;
   z-index: 2;
 }
