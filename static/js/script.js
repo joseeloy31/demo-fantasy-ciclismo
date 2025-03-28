@@ -612,13 +612,15 @@ function pintarTablaMedallas() {
             // Si la posición es igual al número total de jugadores, cuenta farolillo
             if (pos === participantes) farolillos++;
         }
+        let dns = randomDNS(); 
         return {
             jugador,
             puntos: totales[i],
             oros: oro === 0 ? "" : oro,
             platas: plata === 0 ? "" : plata,
             bronces: bronce === 0 ? "" : bronce,
-            farolillos: farolillos === 0 ? "" : farolillos
+            farolillos: farolillos === 0 ? "" : farolillos,
+            dns: dns === 0 ? "" : dns
         };
     });
     
@@ -647,6 +649,9 @@ function pintarTablaMedallas() {
         </div>
         <div class="celda celda-encabezado celda-medalla">
             <div class="contenido-celda contenido-celda-encabezado">🏮</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">DNS</div>
         </div>
     `;
 
@@ -687,6 +692,11 @@ function pintarTablaMedallas() {
                             ${generarMedallaFarolillos(dato.farolillos)}
                         </div>
                     </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedallaDNS(dato.dns)}
+                        </div>
+                    </div>
                 </div>
             `;
         })
@@ -713,12 +723,26 @@ function generarMedallaFarolillos(valor) {
     return valor !== "" ? `<div class="contenido-celda contenido-celda-dato medalla-farolillo">${valor}</div>` : "";
 }
 
+// Función para generar el HTML de datos de DNS si el valor es diferente a ""
+function generarMedallaDNS(valor) {
+    return valor !== "" ? `<div class="contenido-celda contenido-celda-dato medalla-dns">${valor}</div>` : "";
+}
+
 // Función que inicializa el scroll de la taba.
 function inicializarScroll() {
     const contenedorTabla = document.querySelector('.contenedor-tabla');
     contenedorTabla.scrollTop = 0;
     contenedorTabla.scrollLeft = 0;
 }
+
+// Función para generar DNS con probabilidades normalizadas
+function randomDNS() {
+    const r = Math.random();
+    if (r < 75/100) return 0;
+    else if (r < (75+15)/100) return 1;
+    else return 2;
+}
+  
 
 // Función que pinta la tabla de puntos o medallas en función de la selección del usuario.
 function switchTabla(tipo) {

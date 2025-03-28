@@ -379,7 +379,6 @@ body {
 /* Fila de datos: fija la altura de la fila */
 .fila-dato {
   display: table-row;
-  border-bottom: 1px solid #49494933;
 }
 
 /* Celda de datos: forzamos la altura y usamos box-sizing */
@@ -397,6 +396,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 700;
+  box-shadow: inset 0 -1px 0 #49494933;
 }
 
 /* Contenido interno de la celda: centrar verticalmente con flex */
@@ -421,7 +421,6 @@ body {
   left: 0;
   background-color: #004b87;
   box-shadow: 2px 0 0 #008800 inset;
-  transform: translateZ(0);
 }
 
 .celda-encabezado.fija-derecha {
@@ -435,8 +434,10 @@ body {
   position: sticky;
   left: 0;
   background-color: #ffffff;
-  box-shadow: 2px 0 0 #008800 inset;
   z-index: 2;
+  box-shadow:
+    inset 2px 0 0 #008800,
+    inset 0 -1px 0 #49494933;
 }
 
 .celda-dato.fija-derecha {
@@ -563,12 +564,34 @@ body {
 }
 
 .medalla-farolillo {
-  width: 24px;
-  height: 24px;
+  min-width: 16px;
+  max-width: 16px;
+  width: 16px;
+  min-height: 16px;
+  max-height: 16px;
+  height: 16px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: bold;
-  color: #ff6666; /* Rojo un poco más claro */
+  color: #ffdddd;
+  background-color: #ff6666;
+}
+
+.medalla-dns {
+  min-width: 19px;
+  max-width: 19px;
+  width: 19 px;
+  min-height: 16px;
+  max-height: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: #aaa;
+  background-color: #ddd;
 }
