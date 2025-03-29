@@ -514,20 +514,56 @@ function cargarPuntuaciones(liga) {
     const { columnas, jugadores } = datosActuales;
     const numEventos = columnas.length;
     const n = jugadores.length;
-    const eventsPoints = Array.from({ length: numEventos }, () =>
-        Array.from({ length: n }, () => Math.floor(Math.random() * (3317 - 1452 + 1)) + 1452)
+    const eventsPoints = [];
+    const dnsValues = [];
+
+    for (let j = 0; j < numEventos; j++) {
+        eventsPoints[j] = [];
+        dnsValues[j] = [];
+        for (let i = 0; i < n; i++) {
+            // Generamos un número aleatorio para determinar DNS
+            const r = Math.random();
+            let dns = 0;
+            if (r < 0.90) {
+                dns = 0;
+            } else if (r < 0.90 + 0.05) {
+                dns = 1;
+            } else if (r < 0.90 + 0.05 + 0.03) {
+                dns = 2;
+            } else {
+                dns = 3;
+            }
+            dnsValues[j][i] = dns;
+            // Si hay DNS (dns > 0), se asigna 0 a eventPoint; en caso contrario, se genera el punto normal.
+            eventsPoints[j][i] = dns > 0
+                ? 0
+                : Math.floor(Math.random() * (3317 - 1452 + 1)) + 1452;
+        }
+    }
+    
+    // Calculamos las posiciones de cada evento de forma correcta sin utilizar indexOf,
+    // para asignar el ranking basado en la ordenación descendente de los puntos.
+    const posicionesEvento = eventsPoints.map(evento => {
+        const arr = evento.map((p, i) => ({ p, i }));
+        arr.sort((a, b) => b.p - a.p);
+        const pos = Array(evento.length).fill(0);
+        arr.forEach((item, index) => {
+            pos[item.i] = index + 1;
+        });
+        return pos;
+    });
+    
+    const totales = jugadores.map((_, i) =>
+        eventsPoints.reduce((sum, evento) => sum + evento[i], 0)
     );
-    const posicionesEvento = eventsPoints.map(evento =>
-        [...evento].sort((a, b) => b - a).map(puntos => evento.indexOf(puntos) + 1)
-    );
-    const totales = jugadores.map((_, i) => eventsPoints.reduce((sum, evento) => sum + evento[i], 0));
+    
     const rankingTotales = [...totales]
         .map((puntos, i) => ({ puntos, i }))
         .sort((a, b) => b.puntos - a.puntos)
         .map((obj, index) => ({ ...obj, rank: index + 1 }));
-
-    // Guardamos los datos generados globalmente
-    datosGenerados = { eventsPoints, posicionesEvento, totales, rankingTotales };
+    
+    // Guardamos los datos generados globalmente, incluyendo los DNS
+    datosGenerados = { eventsPoints, posicionesEvento, totales, rankingTotales, dnsValues };
 
     // Llamamos a la función que pinta la tabla según el botón activo
     if (esActivoPuntos()) {
@@ -572,18 +608,23 @@ function pintarTablaPuntos() {
                         const puntos = evento[rowIndex];
                         const posicion = posicionesEvento[i][rowIndex];
                         const clasePos = posicion === 1 ? "oro" : posicion === 2 ? "plata" : posicion === 3 ? "bronce" : "";
-                        return `
-                            <div class="celda celda-dato">
-                                <div class="contenido-celda contenido-celda-dato">
-                                    <span class="posicion">(${posicion})</span>
-                                    <span class="valor ${clasePos}">${nf.format(puntos)}</span>
-                                </div>
-                            </div>`;
+                        // Si puntos es 0, no mostramos nada en esa celda.
+                        if (puntos === 0) {
+                            return `<div class="celda celda-dato"></div>`;
+                        } else {
+                            return `
+                                <div class="celda celda-dato">
+                                    <div class="contenido-celda contenido-celda-dato">
+                                        <span class="posicion">(${posicion})</span>
+                                        <span class="valor ${clasePos}">${nf.format(puntos)}</span>
+                                    </div>
+                                </div>`;
+                        }
                     }).join("")}
                     <div class="celda celda-dato fija-derecha">
                         <div class="contenido-celda contenido-celda-dato">
-                            <span class="posicion">(${rankingTotal})</span>
-                            <span class="valor total ${claseTotal}">${nf.format(puntosTotales)}</span>
+                            ${puntosTotales === 0 ? "" : `<span class="posicion">(${rankingTotal})</span>
+                            <span class="valor total ${claseTotal}">${nf.format(puntosTotales)}</span>`}
                         </div>
                     </div>
                 </div>`;
@@ -598,29 +639,38 @@ function pintarTablaMedallas() {
     const { jugadores, columnas } = datosActuales;
     const numEventos = columnas.length;
     const participantes = jugadores.length;
-    // Generamos la información de medallas a partir de los datos generados para puntos
-    const { posicionesEvento, totales } = datosGenerados;
-
-    // Para cada jugador, contamos oros, platas, bronces y farolillos (última posición = posición === n)
+    const { posicionesEvento, totales, eventsPoints, dnsValues } = datosGenerados;
+    
     const medallasData = jugadores.map((jugador, i) => {
-        let oro = 0, plata = 0, bronce = 0, farolillos = 0;
+        let oro = 0, plata = 0, bronce = 0, farolillos = 0, dnsTotal = 0;
         for (let j = 0; j < numEventos; j++) {
             const pos = posicionesEvento[j][i];
-            if (pos === 1) oro++;
-            else if (pos === 2) plata++;
-            else if (pos === 3) bronce++;
-            // Si la posición es igual al número total de jugadores, cuenta farolillo
-            if (pos === participantes) farolillos++;
+            const puntosEvento = eventsPoints[j][i];
+            if (dnsValues[j][i] > 0) {
+                dnsTotal++;
+            }
+            if (puntosEvento > 0) {
+                if (pos === 1) {
+                    oro++;
+                } else if (pos === 2) {
+                    plata++;
+                } else if (pos === 3) {
+                    bronce++;
+                }
+                let activos = eventsPoints[j].filter(p => p > 0).length;
+                if (pos === activos) {
+                    farolillos++;
+                }
+            }
         }
-        let dns = randomDNS(); 
         return {
-            jugador,
-            puntos: totales[i],
+            jugador: jugador,
+            puntos: totales[i] === 0 ? "" : totales[i],
             oros: oro === 0 ? "" : oro,
             platas: plata === 0 ? "" : plata,
             bronces: bronce === 0 ? "" : bronce,
             farolillos: farolillos === 0 ? "" : farolillos,
-            dns: dns === 0 ? "" : dns
+            dns: dnsTotal === 0 ? "" : dnsTotal
         };
     });
     
