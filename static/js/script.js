@@ -412,8 +412,9 @@ let datosActuales = null;
 let datosGenerados = null;
 const nf = new Intl.NumberFormat("es-ES", { useGrouping: true });
 
-function cargarPuntuaciones(liga) {
-    const datosPorPestana = {
+function obtenerDatosPorPestana () {
+
+    return {
         "warm-up-championship": {
             columnas: [
                 "Tour Down Under", "Volta a la Comunitat Valenciana", "Étoile de Bessèges",
@@ -496,8 +497,7 @@ function cargarPuntuaciones(liga) {
         },
         "totales": {
             columnas: [
-                "Warm Up Championship", "Superclasico Fantasy Sixes", "Stage Race Championship",
-                "Spring Classics", "Womens Classics", "Women Stage Race"
+                "#", "Jugador", "Puntos", "Dif. 1º", "Dif. Ant"
             ],
             jugadores: [
                 "Aguilar", "Alberto", "Alex", "César", "Edu", "Erik", "Igor", "Isra",
@@ -505,12 +505,10 @@ function cargarPuntuaciones(liga) {
                 "Pablo", "Juanma", "Seronda", "Picullen", "Aitor"
             ]
         }
-    };
+    }
+}
 
-    // Guardamos los datos actuales globalmente
-    datosActuales = datosPorPestana[liga];
-
-    // Generamos los datos aleatorios y cálculos derivados
+function calcularPuntuaciones(datosActuales) {
     const { columnas, jugadores } = datosActuales;
     const numEventos = columnas.length;
     const n = jugadores.length;
@@ -521,28 +519,13 @@ function cargarPuntuaciones(liga) {
         eventsPoints[j] = [];
         dnsValues[j] = [];
         for (let i = 0; i < n; i++) {
-            // Generamos un número aleatorio para determinar DNS
             const r = Math.random();
-            let dns = 0;
-            if (r < 0.90) {
-                dns = 0;
-            } else if (r < 0.90 + 0.05) {
-                dns = 1;
-            } else if (r < 0.90 + 0.05 + 0.03) {
-                dns = 2;
-            } else {
-                dns = 3;
-            }
+            const dns = r < 0.90 ? 0 : r < 0.95 ? 1 : r < 0.98 ? 2 : 3;
             dnsValues[j][i] = dns;
-            // Si hay DNS (dns > 0), se asigna 0 a eventPoint; en caso contrario, se genera el punto normal.
-            eventsPoints[j][i] = dns > 0
-                ? 0
-                : Math.floor(Math.random() * (3317 - 1452 + 1)) + 1452;
+            eventsPoints[j][i] = dns > 0 ? 0 : Math.floor(Math.random() * (3317 - 1452 + 1)) + 1452;
         }
     }
     
-    // Calculamos las posiciones de cada evento de forma correcta sin utilizar indexOf,
-    // para asignar el ranking basado en la ordenación descendente de los puntos.
     const posicionesEvento = eventsPoints.map(evento => {
         const arr = evento.map((p, i) => ({ p, i }));
         arr.sort((a, b) => b.p - a.p);
@@ -561,16 +544,108 @@ function cargarPuntuaciones(liga) {
         .map((puntos, i) => ({ puntos, i }))
         .sort((a, b) => b.puntos - a.puntos)
         .map((obj, index) => ({ ...obj, rank: index + 1 }));
-    
-    // Guardamos los datos generados globalmente, incluyendo los DNS
-    datosGenerados = { eventsPoints, posicionesEvento, totales, rankingTotales, dnsValues };
 
-    // Llamamos a la función que pinta la tabla según el botón activo
-    if (esActivoPuntos()) {
-        pintarTablaPuntos();
-    } else if (esActivoMedallas()) {
-        pintarTablaMedallas();
+    return { eventsPoints, posicionesEvento, totales, rankingTotales, dnsValues };
+}
+
+function cargarPuntuacionesTotales(datosActuales) {
+
+    const { columnas, jugadores } = datosActuales;
+    const n = jugadores.length;
+    
+    // Genera puntos aleatorios entre 73,218 y 124,765 para cada jugador
+    const puntos = jugadores.map(() =>
+        Math.floor(Math.random() * (124765 - 73218 + 1)) + 73218
+    );
+    
+    // Función para generar DNS según la nueva distribución
+    const generarDNSTotales = () => {
+        const r = Math.random() * 100; // r en [0, 100)
+        if (r < 70) {
+            return 0;
+        } else if (r < 70 + 10) {
+            return 1;
+        } else if (r < 70 + 10 + 5) {
+            return 2;
+        } else if (r < 70 + 10 + 5 + 4) {
+            return 3;
+        } else if (r < 70 + 10 + 5 + 4 + 3) {
+            return 4;
+        } else if (r < 70 + 10 + 5 + 4 + 3 + 2) {
+            return 5;
+        } else if (r < 70 + 10 + 5 + 4 + 3 + 2 + 2) {
+            return 6;
+        } else if (r < 70 + 10 + 5 + 4 + 3 + 2 + 2 + 1) {
+            return 7;
+        } else if (r < 70 + 10 + 5 + 4 + 3 + 2 + 2 + 1 + 1) {
+            return 8;
+        } else if (r < 70 + 10 + 5 + 4 + 3 + 2 + 2 + 1 + 1 + 1) {
+            return 9;
+        } else {
+            return 10;
+        }
+    };
+
+    const dnsArray = jugadores.map(() => {
+        const val = generarDNSTotales();
+        return val === 0 ? "" : val;
+    });
+    
+    // Función para distribuir 100 unidades aleatoriamente entre n jugadores
+    function distribuir100() {
+        const distribucion = Array(n).fill(0);
+        for (let i = 0; i < 100; i++) {
+            const idx = Math.floor(Math.random() * n);
+            distribucion[idx]++;
+        }
+        return distribucion.map(x => x === 0 ? "" : x);
     }
+    const orosArr = distribuir100();
+    const platasArr = distribuir100();
+    const broncesArr = distribuir100();
+    const farolillosArr = distribuir100();
+    
+    // Creamos la estructura de datos para cada jugador
+    let datos = jugadores.map((jugador, i) => ({
+        jugador: jugador,
+        puntos: puntos[i] === 0 ? "" : puntos[i],
+        oros: orosArr[i],
+        platas: platasArr[i],
+        bronces: broncesArr[i],
+        farolillos: farolillosArr[i],
+        dns: dnsArray[i]
+    }));
+    
+    return datos;
+}
+
+function cargarPuntuaciones(liga) {
+    const datosPorPestana = obtenerDatosPorPestana();
+    datosActuales = datosPorPestana[liga];
+
+    if (liga === "totales") {
+        datosGenerados = cargarPuntuacionesTotales(datosActuales);
+    } else {
+        datosGenerados = calcularPuntuaciones(datosActuales);
+    }
+
+    if (esActivoPuntos()) {
+        if (esActivoTotales()) {
+            pintarTablaPuntosTotales();
+        } else {
+            pintarTablaPuntos();
+        }
+    } else if (esActivoMedallas()) {
+        if (esActivoTotales()) {
+            pintarTablaMedallasTotales();
+        } else {
+            pintarTablaMedallas();
+        }
+    }
+}
+
+function esActivoTotales() {
+    return document.querySelector('.pestana.activa')?.dataset.id === "totales";
 }
 
 function pintarTablaPuntos() {
@@ -799,10 +874,189 @@ function switchTabla(tipo) {
     if (tipo === 'puntos') {
         document.getElementById("btn-puntos").classList.add("activo");
         document.getElementById("btn-medallas").classList.remove("activo");
-        pintarTablaPuntos();
+        if (esActivoTotales()) {
+            pintarTablaPuntosTotales();
+        } else {
+            pintarTablaPuntos();
+        }
     } else if (tipo === 'medallas') {
         document.getElementById("btn-medallas").classList.add("activo");
         document.getElementById("btn-puntos").classList.remove("activo");
-        pintarTablaMedallas();
+        if (esActivoTotales()) {
+            pintarTablaMedallasTotales();
+        } else {
+            pintarTablaMedallas();
+        }
     }
+}
+
+function pintarTablaPuntosTotales() {
+    // Copiamos y ordenamos los datosTotales en orden descendente por puntos
+    let datos = [...datosGenerados].sort((a, b) => b.puntos - a.puntos);
+    
+    // Calculamos el ranking y las diferencias
+    const primerPuntos = datos[0].puntos;
+    for (let i = 0; i < datos.length; i++) {
+        datos[i].rank = i + 1;
+        datos[i].dif1 = i === 0 ? "" : primerPuntos - datos[i].puntos;
+        datos[i].difAnterior = i === 0 ? "" : datos[i - 1].puntos - datos[i].puntos;
+    }
+    
+    // Pintamos el encabezado de la tabla
+    document.getElementById("encabezado").innerHTML = `
+        <div class="celda celda-encabezado fija-izquierda celda-posicion">
+            <div class="contenido-celda contenido-celda-encabezado">#</div>
+        </div>
+        <div class="celda celda-encabezado">
+            <div class="contenido-celda contenido-celda-encabezado">Jugador</div>
+        </div>
+        <div class="celda celda-encabezado">
+            <div class="contenido-celda contenido-celda-encabezado">Puntos</div>
+        </div>
+        <div class="celda celda-encabezado">
+            <div class="contenido-celda contenido-celda-encabezado">Dif. 1º</div>
+        </div>
+        <div class="celda celda-encabezado fija-derecha">
+            <div class="contenido-celda contenido-celda-encabezado">Dif. Anterior</div>
+        </div>
+    `;
+    
+    // Pintamos las filas de la tabla
+    const cuerpo = document.getElementById("tabla-jugadores");
+    cuerpo.innerHTML = datos
+        .map((dato, index) => {
+            // Asigna una clase extra a las primeras tres filas
+            const claseTotal = index === 0 ? "oro" : index === 1 ? "plata" : index === 2 ? "bronce" : "";
+            const filaExtra = index === 0 ? "fila-oro" : index === 1 ? "fila-plata" : index === 2 ? "fila-bronce" : "";
+            return `
+                <div class="fila fila-dato ${filaExtra}">
+                    <div class="celda celda-dato fija-izquierda celda-posicion">
+                        <div class="contenido-celda contenido-celda-dato">${dato.rank}</div>
+                    </div>
+                    <div class="celda celda-dato">
+                        <div class="contenido-celda contenido-celda-dato izquierda">${dato.jugador}</div>
+                    </div>
+                    <div class="celda celda-dato">
+                        <div class="contenido-celda contenido-celda-dato">
+                            <span class="valor total ${claseTotal}">${nf.format(dato.puntos)}</span>
+                        </div>
+                    </div>
+                    <div class="celda celda-dato">
+                        <div class="contenido-celda contenido-celda-dato">${dato.dif1 === "" ? "" : nf.format(dato.dif1)}</div>
+                    </div>
+                    <div class="celda celda-dato fija-derecha">
+                        <div class="contenido-celda contenido-celda-dato">${dato.difAnterior === "" ? "" : nf.format(dato.difAnterior)}</div>
+                    </div>
+                </div>
+            `;
+        })
+        .join("");
+    
+    inicializarScroll();
+}
+
+function pintarTablaMedallasTotales() {
+    // Copia la estructura de datos generados y la ordena según el criterio:
+    // - Descendente por oros, platas, bronces
+    // - Ascendente por DNS y farolillos
+    let datos = [...datosGenerados].sort((a, b) => {
+        const oroA = a.oros === "" ? 0 : Number(a.oros);
+        const oroB = b.oros === "" ? 0 : Number(b.oros);
+        if (oroB !== oroA) return oroB - oroA;
+
+        const plataA = a.platas === "" ? 0 : Number(a.platas);
+        const plataB = b.platas === "" ? 0 : Number(b.platas);
+        if (plataB !== plataA) return plataB - plataA;
+        
+        const bronceA = a.bronces === "" ? 0 : Number(a.bronces);
+        const bronceB = b.bronces === "" ? 0 : Number(b.bronces);
+        if (bronceB !== bronceA) return bronceB - bronceA;
+        
+        const dnsA = a.dns === "" ? 0 : Number(a.dns);
+        const dnsB = b.dns === "" ? 0 : Number(b.dns);
+        if (dnsA !== dnsB) return dnsA - dnsB; // menos DNS es mejor
+        
+        const farA = a.farolillos === "" ? 0 : Number(a.farolillos);
+        const farB = b.farolillos === "" ? 0 : Number(b.farolillos);
+        return farA - farB; // menos farolillos es mejor
+    });
+
+    // Asignamos ranking y calculamos diferencias basadas en los puntos totales
+    const primerPuntos = Number(datos[0].puntos) || 0;
+    for (let i = 0; i < datos.length; i++) {
+        datos[i].rank = i + 1;
+        datos[i].dif1 = i === 0 ? "" : primerPuntos - (Number(datos[i].puntos) || 0);
+        datos[i].difAnterior = i === 0 ? "" : (Number(datos[i - 1].puntos) || 0) - (Number(datos[i].puntos) || 0);
+    }
+    
+    // Pintamos el encabezado de la tabla
+    // Encabezado para la tabla de "Medallas"
+    document.getElementById("encabezado").innerHTML = `
+        <div class="celda celda-encabezado celda-posicion">
+            <div class="contenido-celda contenido-celda-encabezado">#</div>
+        </div>
+        <div class="celda celda-encabezado">
+            <div class="contenido-celda contenido-celda-encabezado">Jugador</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">🥇</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">🥈</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">🥉</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">🏮</div>
+        </div>
+        <div class="celda celda-encabezado celda-medalla">
+            <div class="contenido-celda contenido-celda-encabezado">DNS</div>
+        </div>
+    `;
+
+    const cuerpo = document.getElementById("tabla-jugadores");
+    cuerpo.innerHTML = datos
+        .map((dato, index) => {
+            // Asigna una clase extra a las primeras tres filas
+            const filaExtra = index === 0 ? "fila-oro" : index === 1 ? "fila-plata" : index === 2 ? "fila-bronce" : "";
+            return `
+                <div class="fila fila-dato ${filaExtra}">
+                    <div class="celda celda-dato celda-posicion">
+                        <div class="contenido-celda contenido-celda-dato">${index + 1}</div>
+                    </div>
+                    <div class="celda celda-dato">
+                        <div class="contenido-celda contenido-celda-dato izquierda">${dato.jugador}</div>
+                    </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedalla(dato.oros, "medalla-oro")}
+                        </div>
+                    </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedalla(dato.platas, "medalla-plata")}
+                        </div>
+                    </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedalla(dato.platas, "medalla-bronce")}
+                        </div>
+                    </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedallaFarolillos(dato.farolillos)}
+                        </div>
+                    </div>
+                    <div class="celda celda-dato celda-medalla">
+                        <div class="contenido-celda contenido-celda-dato">
+                            ${generarMedallaDNS(dato.dns)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        })
+        .join("");
+    
+    inicializarScroll();
 }
