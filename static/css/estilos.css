@@ -114,6 +114,11 @@ body {
   display: none;
 }
 
+.filtro__botones-wrapper > * {
+  padding-bottom: -36px;
+  margin-bottom: -17px;
+}
+
 .filtro__boton {
   scroll-snap-align: start;
   flex-shrink: 0;
