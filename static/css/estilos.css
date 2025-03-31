@@ -107,16 +107,12 @@ body {
   display: flex;
   gap: 8px;
   scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
 
 /* Ocultar scrollbar en WebKit */
 .filtro__botones-wrapper::-webkit-scrollbar {
   display: none;
-}
-
-.filtro__botones-wrapper > * {
-  padding-bottom: -36px;
-  margin-bottom: -17px;
 }
 
 .filtro__boton {
